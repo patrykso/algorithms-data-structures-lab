@@ -1,5 +1,8 @@
+//ta wersja nie przeszla automatycznych testow na stosie bo termin uplynal :(
+//improvment z o(n) do o(1.2)
 #include <iostream>
 #include <string>
+#include <cmath>
 using namespace std;
 
 int getChar(char number);
@@ -7,8 +10,7 @@ int compareStrings(string first, string second);
 void shellSort(int n, string *numbers);
 
 void shellSort(int n, string *numbers) {
-//    for(int k = n / 2; k > 0; k /= 2);
-    int k = n / 2;
+    int k = pow(2.0, log2(n)) - 1;
     string temp;
     while(k >= 1) {
         for(int i = k; i < n; i++) {
@@ -22,7 +24,7 @@ void shellSort(int n, string *numbers) {
             }
             numbers[j] = x;
         }
-        k /= 2;
+        k = (k+1)/2 - 1;
     }
 }
 
@@ -40,11 +42,11 @@ int main() {
 
 int compareStrings(string first, string second) {
     //0 for first string bigger, 1 for second, 2 for equal
-    if((first[0] == '-')) {
-        if((second[0] != '-')) return 1;
+    if(first[0] == '-') {
+        if(second[0] != '-') return 1;
     }
-    if((second[0] == '-')) {
-        if((first[0] != '-')) return 0;
+    if(second[0] == '-') {
+        if(first[0] != '-') return 0;
     }
 
     if (first[0] == '-' && second[0] == '-') {
@@ -65,7 +67,7 @@ int compareStrings(string first, string second) {
             if (getChar(second[i]) > getChar(first[i])) return 1;
         }
     }
-    
+
     return 2;
 }
 
