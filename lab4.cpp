@@ -11,6 +11,7 @@ public:
     Person();
     Person(string name, string date);
     string getName();
+    string getDate();
     int getDay();
     int getMonth();
     int getYear();
@@ -38,6 +39,10 @@ void Person::setIntDate(string date) {
 
 string Person::getName() {
     return this->name;
+}
+
+string Person::getDate() {
+    return this->date;
 }
 
 int Person::getDay() {
@@ -117,29 +122,20 @@ void Vector::changeComparator() { //0 names 1 dates
 int Vector::compareNames(Person person1, Person person2) { //0 for person1 name being before in alphabet order person2 date, 2 for equal, else 1
     string name1 = person1.getName();
     string name2 = person2.getName();
-    unsigned long length;
-    if (name1.size() >= name2.size()) length = name2.size();
-    else length = name1.size();
-    unsigned long i = 0;
-    char first, second;
-    while (i < length) {
-        first = name1[i];
-        second = name2[i];
-        if (int(first) < int(second)) return 0;
-        else if (int(first) > int(second)) return 1;
-        i++;
-    }
-    return 2;
+    if (name1.compare(name2) == 0) return 2;
+    else if (name1.compare(name2) < 0) return 0;
+    else return 1;
 }
 
 int Vector::compareDates(Person person1, Person person2) { //0 for person1 date being before person2 date, 2 for equal, else 1
-    if (person1.getYear() < person2.getYear()) return 0;
+    if (person1.getDate() == person2.getDate()) return 2;
+    else if (person1.getYear() < person2.getYear()) return 0;
     else if (person1.getYear() > person2.getYear()) return 1;
     else if (person1.getMonth() < person2.getMonth()) return 0;
     else if (person1.getMonth() > person2.getMonth()) return 1;
     else if (person1.getDay() < person2.getDay()) return 0;
     else if (person1.getDay() > person2.getDay()) return 1;
-    return 2;
+    else return 2;
 }
 
 void Vector::removeMin() {
@@ -220,7 +216,6 @@ void Vector::heapify(int i) {
                 else smallest = left;
             }
         }
-
         if (smallest != i) {
             swap(i, smallest);
             heapify(smallest);
