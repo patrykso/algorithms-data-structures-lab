@@ -57,7 +57,7 @@ void Person::print() {
 }
 
 class Vector {
-    Person *array;
+    Person* array;
     int size;
     int maxSize;
     int comparator; //0 for names, 1 for dates
@@ -87,25 +87,13 @@ Vector::Vector() {
     array = new Person[maxSize];
 }
 
-void Vector::push(Person person) {
-    if(size == maxSize) {
-        maxSize = maxSize * 2;
-        Person *tmp_array = array;
-        array = new Person[maxSize];
-        for(int i = 0; i < maxSize; i++) array[i] = tmp_array[i];
-        delete [] tmp_array;
-    }
-    array[size] = person;
-    size++;
-}
-
 Person Vector::get(int index) {
     if (index < size) return array[index];
     return array[0];
 }
 
 void Vector::print() {
-    for(int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++) {
         array[i].print();
         cout << endl;
     }
@@ -118,11 +106,11 @@ void Vector::swap(int first, int second) {
 }
 
 Vector::~Vector() {
-    delete [] array;
+    delete[] array;
 }
 
 void Vector::changeComparator() { //0 names 1 dates
-    if(this ->comparator == 0) this->comparator = 1;
+    if (this->comparator == 0) this->comparator = 1;
     else comparator = 0;
 }
 
@@ -163,32 +151,32 @@ void Vector::removeMin() {
 }
 
 void Vector::buildHeap() {
-    for (int i = 0; i < size; i++) {
+    for (int i = Vector::parent(size); i >= 0; i--) {
         heapify(i);
     }
 }
 
 void Vector::heapInsert(Person person) {
-    if(size == maxSize) {
+    if (size == maxSize) {
         maxSize = maxSize * 2;
-        Person *tmp_array = array;
+        Person* tmp_array = array;
         array = new Person[maxSize];
-        for(int i = 0; i < size; i++) array[i] = tmp_array[i];
+        for (int i = 0; i < size; i++) array[i] = tmp_array[i];
         delete [] tmp_array;
     }
     size++;
-    if(size == 1) array[0] = person;
+    if (size == 1) array[0] = person;
     else {
         int i = size - 1;
         array[i] = person;
-        if(comparator == 0) { //names
-            while(i > 0 && compareNames(get(parent(i)), get(i)) == 1) {
+        if (comparator == 0) { //names
+            while (i > 0 && compareNames(get(parent(i)), get(i)) == 1) {
                 swap(i, parent(i));
                 i = Vector::parent(i);
             }
         }
         else { //dates
-            while(i > 0 && compareDates(get(parent(i)), get(i)) == 1) {
+            while (i > 0 && compareDates(get(parent(i)), get(i)) == 1) {
                 swap(i, parent(i));
                 i = Vector::parent(i);
             }
@@ -203,13 +191,11 @@ void Vector::heapify(int i) {
     if (this->comparator == 0) { //names
         if (left < this->size && compareNames(Vector::get(left), Vector::get(i)) == 0) {
             smallest = left;
-            if (compareNames(Vector::get(right), Vector::get(left)) == 2) {
-                if (right < left) smallest = right;
-                else smallest = left;
-            }
         }
         if (right < this->size && compareNames(Vector::get(right), Vector::get(smallest)) == 0) {
             smallest = right;
+        }
+        if (right < this->size && left < this->size) {
             if (compareNames(Vector::get(right), Vector::get(left)) == 2) {
                 if (right < left) smallest = right;
                 else smallest = left;
@@ -223,18 +209,18 @@ void Vector::heapify(int i) {
     else { //dates
         if (left < this->size && compareDates(Vector::get(left), Vector::get(i)) == 0) {
             smallest = left;
-            if (compareDates(Vector::get(right), Vector::get(left)) == 2) {
-                if (right < left) smallest = right;
-                else smallest = left;
-            }
         }
         if (right < this->size && compareDates(Vector::get(right), Vector::get(smallest)) == 0) {
             smallest = right;
+        }
+
+        if (right < this->size && left < this->size) {
             if (compareDates(Vector::get(right), Vector::get(left)) == 2) {
                 if (right < left) smallest = right;
                 else smallest = left;
             }
         }
+
         if (smallest != i) {
             swap(i, smallest);
             heapify(smallest);
@@ -243,11 +229,11 @@ void Vector::heapify(int i) {
 }
 
 int Vector::right(int i) {
-    return (2 * i + 2);
+    return ((2 * i) + 2);
 }
 
 int Vector::left(int i) {
-    return (2 * i + 1);
+    return ((2 * i) + 1);
 }
 
 int Vector::parent(int i) {
