@@ -122,9 +122,14 @@ void Vector::changeComparator() { //0 names 1 dates
 int Vector::compareNames(Person person1, Person person2) { //0 for person1 name being before in alphabet order person2 date, 2 for equal, else 1
     string name1 = person1.getName();
     string name2 = person2.getName();
-    if (name1.compare(name2) == 0) return 2;
-    else if (name1.compare(name2) < 0) return 0;
-    else return 1;
+    if (name1 == name2) return 2;
+    int i = 0;
+    while (name1[i] != '\0' || name2[i] != '\0') {
+        if(int(name1[i] < int(name2[i]))) return 0;
+        else if(int(name1[i] > int(name2[i]))) return 1;
+        i++;
+    }
+    return 0;
 }
 
 int Vector::compareDates(Person person1, Person person2) { //0 for person1 date being before person2 date, 2 for equal, else 1
@@ -183,42 +188,41 @@ void Vector::heapInsert(Person person) {
 void Vector::heapify(int i) {
     int left = Vector::left(i);
     int right = Vector::right(i);
-    int smallest = i;
+    int pos = i;
     if (this->comparator == 0) { //names
         if (left < this->size && compareNames(Vector::get(left), Vector::get(i)) == 0) {
-            smallest = left;
+            pos = left;
         }
-        if (right < this->size && compareNames(Vector::get(right), Vector::get(smallest)) == 0) {
-            smallest = right;
+        if (right < this->size && compareNames(Vector::get(right), Vector::get(pos)) == 0) {
+            pos = right;
         }
-        if (right < this->size && left < this->size) {
+        if (right <= this->size && left <= this->size) {
             if (compareNames(Vector::get(right), Vector::get(left)) == 2) {
-                if (right < left) smallest = right;
-                else smallest = left;
+                if (right < left) pos = right;
+                else pos = left;
             }
         }
-        if (smallest != i) {
-            swap(i, smallest);
-            heapify(smallest);
+        if (pos != i) {
+            swap(i, pos);
+            heapify(pos);
         }
     }
     else { //dates
         if (left < this->size && compareDates(Vector::get(left), Vector::get(i)) == 0) {
-            smallest = left;
+            pos = left;
         }
-        if (right < this->size && compareDates(Vector::get(right), Vector::get(smallest)) == 0) {
-            smallest = right;
+        if (right < this->size && compareDates(Vector::get(right), Vector::get(pos)) == 0) {
+            pos = right;
         }
-
-        if (right < this->size && left < this->size) {
+        if (right <= this->size && left <= this->size) {
             if (compareDates(Vector::get(right), Vector::get(left)) == 2) {
-                if (right < left) smallest = right;
-                else smallest = left;
+                if (right < left) pos = right;
+                else pos = left;
             }
         }
-        if (smallest != i) {
-            swap(i, smallest);
-            heapify(smallest);
+        if (pos != i) {
+            swap(i, pos);
+            heapify(pos);
         }
     }
 }
