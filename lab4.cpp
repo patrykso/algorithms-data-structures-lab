@@ -101,7 +101,6 @@ void Vector::push(Person person) {
 
 Person Vector::get(int index) {
     if (index < size) return array[index];
-    cout << "Warning! Returned root!" << endl;
     return array[0];
 }
 
@@ -174,7 +173,7 @@ void Vector::heapInsert(Person person) {
         maxSize = maxSize * 2;
         Person *tmp_array = array;
         array = new Person[maxSize];
-        for(int i = 0; i < maxSize; i++) array[i] = tmp_array[i];
+        for(int i = 0; i < size; i++) array[i] = tmp_array[i];
         delete [] tmp_array;
     }
     size++;
@@ -204,9 +203,17 @@ void Vector::heapify(int i) {
     if (this->comparator == 0) { //names
         if (left < this->size && compareNames(Vector::get(left), Vector::get(i)) == 0) {
             smallest = left;
+            if (compareNames(Vector::get(right), Vector::get(left)) == 2) {
+                if (right < left) smallest = right;
+                else smallest = left;
+            }
         }
         if (right < this->size && compareNames(Vector::get(right), Vector::get(smallest)) == 0) {
             smallest = right;
+            if (compareNames(Vector::get(right), Vector::get(left)) == 2) {
+                if (right < left) smallest = right;
+                else smallest = left;
+            }
         }
         if (smallest != i) {
             swap(i, smallest);
@@ -216,9 +223,17 @@ void Vector::heapify(int i) {
     else { //dates
         if (left < this->size && compareDates(Vector::get(left), Vector::get(i)) == 0) {
             smallest = left;
+            if (compareDates(Vector::get(right), Vector::get(left)) == 2) {
+                if (right < left) smallest = right;
+                else smallest = left;
+            }
         }
         if (right < this->size && compareDates(Vector::get(right), Vector::get(smallest)) == 0) {
             smallest = right;
+            if (compareDates(Vector::get(right), Vector::get(left)) == 2) {
+                if (right < left) smallest = right;
+                else smallest = left;
+            }
         }
         if (smallest != i) {
             swap(i, smallest);
@@ -240,7 +255,7 @@ int Vector::parent(int i) {
     else return i;
 }
 
-int main() { //kopiec taki, ze korzeniem jest alfabetyczne imie
+int main() {
     string command, date, name;
     Vector people;
     int n;
@@ -255,12 +270,14 @@ int main() { //kopiec taki, ze korzeniem jest alfabetyczne imie
         }
         else if (command == "p") {
             people.print();
+            cout << endl;
         }
-        else if (command == "-") { //usun z wierzchu n min elementow
+        else if (command == "-") {
             cin >> n;
             for (int i = 0; i < n; i++) {
                 people.removeMin();
             }
+            cout << endl;
         }
         else if (command == "r") {
             people.changeComparator();
