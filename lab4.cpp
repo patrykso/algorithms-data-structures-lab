@@ -1,0 +1,272 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Person {
+    int day, month, year;
+    string name, date;
+    void setIntDate(string date);
+public:
+    Person();
+    Person(string name, string date);
+    string getName();
+    int getDay();
+    int getMonth();
+    int getYear();
+    void print();
+};
+
+Person::Person() {
+    Person("null", "00-00-0000");
+}
+
+Person::Person(string name, string date) {
+    this->name = name;
+    this->date = date;
+    setIntDate(date);
+}
+
+void Person::setIntDate(string date) {
+    string copy = date.substr(0, 2);
+    this->day = stoi(copy);
+    copy = date.substr(3, 2);
+    this->month = stoi(copy);
+    copy = date.substr(6, 4);
+    this->year = stoi(copy);
+}
+
+string Person::getName() {
+    return this->name;
+}
+
+int Person::getDay() {
+    return this->day;
+}
+
+int Person::getMonth() {
+    return this->month;
+}
+
+int Person::getYear() {
+    return this->year;
+}
+
+void Person::print() {
+    cout << this->date << " " << this->name;
+}
+
+class Vector {
+    Person *array;
+    int size;
+    int maxSize;
+    int comparator; //0 for names, 1 for dates
+    int parent(int i);
+    int left(int i);
+    int right(int i);
+    int compareNames(Person person1, Person person2);
+    int compareDates(Person person1, Person person2);
+    void swap(int first, int second);
+    void heapify(int i);
+    void push(Person person);
+public:
+    Vector();
+    ~Vector();
+    Person get(int index);
+    void print();
+    void changeComparator();
+    void removeMin();
+    void buildHeap();
+    void heapInsert(Person person);
+};
+
+Vector::Vector() {
+    size = 0;
+    comparator = 0;
+    maxSize = 1;
+    array = new Person[maxSize];
+}
+
+void Vector::push(Person person) {
+    if(size == maxSize) {
+        maxSize = maxSize * 2;
+        Person *tmp_array = array;
+        array = new Person[maxSize];
+        for(int i = 0; i < maxSize; i++) array[i] = tmp_array[i];
+        delete [] tmp_array;
+    }
+    array[size] = person;
+    size++;
+}
+
+Person Vector::get(int index) {
+    if (index < size) return array[index];
+    cout << "Warning! Returned root!" << endl;
+    return array[0];
+}
+
+void Vector::print() {
+    for(int i = 0; i < size; i++) {
+        array[i].print();
+        cout << endl;
+    }
+}
+
+void Vector::swap(int first, int second) {
+    Person tmp = get(first);
+    array[first] = array[second];
+    array[second] = tmp;
+}
+
+Vector::~Vector() {
+    delete [] array;
+}
+
+void Vector::changeComparator() { //0 names 1 dates
+    if(this ->comparator == 0) this->comparator = 1;
+    else comparator = 0;
+}
+
+int Vector::compareNames(Person person1, Person person2) { //0 for person1 name being before in alphabet order person2 date, 2 for equal, else 1
+    string name1 = person1.getName();
+    string name2 = person2.getName();
+    unsigned long length;
+    if (name1.size() >= name2.size()) length = name2.size();
+    else length = name1.size();
+    unsigned long i = 0;
+    char first, second;
+    while (i < length) {
+        first = name1[i];
+        second = name2[i];
+        if (int(first) < int(second)) return 0;
+        else if (int(first) > int(second)) return 1;
+        i++;
+    }
+    return 2;
+}
+
+int Vector::compareDates(Person person1, Person person2) { //0 for person1 date being before person2 date, 2 for equal, else 1
+    if (person1.getYear() < person2.getYear()) return 0;
+    else if (person1.getYear() > person2.getYear()) return 1;
+    else if (person1.getMonth() < person2.getMonth()) return 0;
+    else if (person1.getMonth() > person2.getMonth()) return 1;
+    else if (person1.getDay() < person2.getDay()) return 0;
+    else if (person1.getDay() > person2.getDay()) return 1;
+    return 2;
+}
+
+void Vector::removeMin() {
+    get(0).print();
+    cout << endl;
+    array[0] = array[size - 1];
+    this->size--;
+    heapify(0);
+}
+
+void Vector::buildHeap() {
+    for (int i = 0; i < size; i++) {
+        heapify(i);
+    }
+}
+
+void Vector::heapInsert(Person person) {
+    if(size == maxSize) {
+        maxSize = maxSize * 2;
+        Person *tmp_array = array;
+        array = new Person[maxSize];
+        for(int i = 0; i < maxSize; i++) array[i] = tmp_array[i];
+        delete [] tmp_array;
+    }
+    size++;
+    if(size == 1) array[0] = person;
+    else {
+        int i = size - 1;
+        array[i] = person;
+        if(comparator == 0) { //names
+            while(i > 0 && compareNames(get(parent(i)), get(i)) == 1) {
+                swap(i, parent(i));
+                i = Vector::parent(i);
+            }
+        }
+        else { //dates
+            while(i > 0 && compareDates(get(parent(i)), get(i)) == 1) {
+                swap(i, parent(i));
+                i = Vector::parent(i);
+            }
+        }
+    }
+}
+
+void Vector::heapify(int i) {
+    int left = Vector::left(i);
+    int right = Vector::right(i);
+    int smallest = i;
+    if (this->comparator == 0) { //names
+        if (left < this->size && compareNames(Vector::get(left), Vector::get(i)) == 0) {
+            smallest = left;
+        }
+        if (right < this->size && compareNames(Vector::get(right), Vector::get(smallest)) == 0) {
+            smallest = right;
+        }
+        if (smallest != i) {
+            swap(i, smallest);
+            heapify(smallest);
+        }
+    }
+    else { //dates
+        if (left < this->size && compareDates(Vector::get(left), Vector::get(i)) == 0) {
+            smallest = left;
+        }
+        if (right < this->size && compareDates(Vector::get(right), Vector::get(smallest)) == 0) {
+            smallest = right;
+        }
+        if (smallest != i) {
+            swap(i, smallest);
+            heapify(smallest);
+        }
+    }
+}
+
+int Vector::right(int i) {
+    return (2 * i + 2);
+}
+
+int Vector::left(int i) {
+    return (2 * i + 1);
+}
+
+int Vector::parent(int i) {
+    if (i > 0) return ((i - 1) / 2);
+    else return i;
+}
+
+int main() { //kopiec taki, ze korzeniem jest alfabetyczne imie
+    string command, date, name;
+    Vector people;
+    int n;
+    while (cin >> command) {
+        if (command == "q") break;
+        else if (command == "+") {
+            cin >> n;
+            for (int i = 0; i < n; i++) {
+                cin >> date >> name;
+                people.heapInsert(Person(name, date));
+            }
+        }
+        else if (command == "p") {
+            people.print();
+        }
+        else if (command == "-") { //usun z wierzchu n min elementow
+            cin >> n;
+            for (int i = 0; i < n; i++) {
+                people.removeMin();
+            }
+        }
+        else if (command == "r") {
+            people.changeComparator();
+            people.buildHeap();
+        }
+        else continue;
+    }
+    return 0;
+}
