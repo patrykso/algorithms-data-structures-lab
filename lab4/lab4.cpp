@@ -196,12 +196,6 @@ void Vector::heapify(int i) {
         if (right < this->size && compareNames(Vector::get(right), Vector::get(pos)) == 0) {
             pos = right;
         }
-//        if (right <= this->size && left <= this->size) {
-//            if (compareNames(Vector::get(right), Vector::get(left)) == 2) {
-//                if (right < left) pos = right;
-//                else pos = left;
-//            }
-//        }
         if (pos != i) {
             swap(i, pos);
             heapify(pos);
@@ -214,12 +208,6 @@ void Vector::heapify(int i) {
         if (right < this->size && compareDates(Vector::get(right), Vector::get(pos)) == 0) {
             pos = right;
         }
-//        if (right <= this->size && left <= this->size) {
-//            if (compareDates(Vector::get(right), Vector::get(left)) == 2) {
-//                if (right < left) pos = right;
-//                else pos = left;
-//            }
-//        }
         if (pos != i) {
             swap(i, pos);
             heapify(pos);
